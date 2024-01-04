@@ -88,23 +88,23 @@ from datetime import datetime
 from typing import Iterator
 
 
-list1 = range(0,20)
-list2 = "apple banana cherry pear apricot strawberry".split()
-list3 = [ (x, x**2, x**3) for x in range(0,10) ]
+zerototwenty = range(0,20)
+fruits = "apple banana cherry pear apricot strawberry".split()
+powers = [ (x, x**2, x**3) for x in range(0,10) ]
 
-@app.get("/get_list1")
+@app.get("/get_zerototwenty")
 async def get_list1():
     async def event_generator():
-        for num in list1:
+        for num in zerototwenty:
             yield f"data: {num}\n\n"
             asyncio.sleep(2)
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
-@app.get("/get_list2")
+@app.get("/get_fruits")
 async def get_list2():
     async def event_generator():
-        for fruit in list2():
+        for fruit in fruits():
             yield f"data: {fruit}\n\n"
             asyncio.sleep(2)
     return StreamingResponse(event_generator(), media_type="text/event-stream")
@@ -142,41 +142,76 @@ async def chart_data(request: Request) -> StreamingResponse:
     return response
 
 
-@app.get("/htmx2")
-async def htmx2(request: Request, hx_request:Optional[str] = Header(None) ):
+blanks = [
+]
+table1_films = [
+    {"name":"action1", "director":"director1"},
+    {"name":"action2", "director":"director1"},
+    {"name":"action3", "director":"director1"},
+]
+table2_films = [
+    {"name":"comedy1", "director":"director1"},
+    {"name":"comedy1", "director":"director1"},
+    {"name":"comedy1", "director":"director1"},
+]
+table3_films = [
+    {"name":"romance1", "director":"director1"},
+    {"name":"romance2", "director":"director1"},
+    {"name":"romance3", "director":"director1"},
+]
 
-    films = [
-        {"name":"blade runner", "director":"ridley scott"},
-        {"name": "star wars", "director": "george lucas"},
-        {"name": "history of the world", "director": "mel brooks"},
-    ]
+@app.get("/fruit_ul", response_class=HTMLResponse)
+async def fruit_ul(request: Request, 
+                #  query parameters added by  hx-vals='{"callerId": "Table3"}'
+                callerId:str=None,  
+                # HTTP headers added by HTMX   
+                hx_request:Optional[str] = Header(None), 
+                hx_target:Optional[str] = Header(None) ,
+                hx_prompt:Optional[str] = Header(None) 
+                ):
+
+    print(f"{hx_target=}  {callerId=} ")
 
     if hx_request:
-        print("hx_request recieved")
-        response = templates.TemplateResponse("table.html", context={"request": request, "films":   films  })
-    else:
-        raise HTTPException("htmx event handler called incorrectly")
+        response = templates.TemplateResponse("listelements.html", context={"request": request, "items":   fruits  })
+    return response
+
+
+
+@app.get("/table_rows", response_class=HTMLResponse)
+async def table_rows(request: Request, 
+                #  query parameters from  hx-get="/?table=3&length=5"
+                table:str=None, 
+                length:str=None, 
+                #  query parameters added by  hx-vals='{"callerId": "Table3"}'
+                callerId:str=None,  
+                # HTTP headers added by HTMX   
+                hx_request:Optional[str] = Header(None), 
+                hx_target:Optional[str] = Header(None) ,
+                hx_prompt:Optional[str] = Header(None) 
+                ):
+
+    print(f"{hx_target=}  {table=}  {callerId=} {length=}")
+
+    def get_films(target):
+        match target:
+            case "table1-body":
+                return table1_films
+            case "table2-body":
+                return table2_films
+            case "table3-body":
+                return table3_films
+            case _:
+                return None
+        
+    if hx_request:
+        response = templates.TemplateResponse("table.html", context={"request": request, "films":  get_films(hx_target)   })
     return response
 
 
 @app.get("/", response_class=HTMLResponse)
-async def Htmx1(request: Request, hx_request:Optional[str] = Header(None) ):
-
-    blanks = [
-    ]
-
-    films = [
-        {"name":"blade runner", "director":"ridley scott"},
-        {"name": "star wars", "director": "george lucas"},
-        {"name": "history of the world", "director": "mel brooks"},
-    ]
-
-    if hx_request:
-        print("hx_request recieved")
-        response = templates.TemplateResponse("table.html", context={"request": request, "films":   films  })
-    else:
-        print("no HTMX")
-        response = templates.TemplateResponse("traversy_htmx.html", context={"request": request, "films":   blanks  })
+async def GeneratePage(request: Request):
+    response = templates.TemplateResponse("traversy_htmx.html", context={"request": request, "films":   blanks  })
     return response
 
 
