@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/sse.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>HTMX Crash Course</title>
+</head>
+<body>
+    <script>
+    htmx.logger = function(elt, event, data) {
+        if(console) {
+            console.log(event, elt, data);
+        }
+    }        
+    htmx.logAll();
+    </script>
+
+    <button class="bg-blue-500 text-white py-2 px-3 my-5 rounded-lg" id="sse-2" hx-ext="sse" hx-sse-connect="/chart-data">chartdata</button>
+
+
+    <button class="bg-blue-500 text-white py-2 px-3 my-5 rounded-lg">
+        <img src="svg/puff.svg" />
+        </button>
+
+        <div class="text-center">
+        <h1 class="text-2xl font-bold my-5">Simple Request Example</h1>
+
+        <button class="bg-blue-500 text-white py-2 px-3 my-5 rounded-lg"
+        hx-get="/"
+        hx-target="#table1-body"
+        hx-swap="beforeend"
+        hx-trigger="click"
+        >Fill Table 1</button>
+
+        <button class="bg-blue-500 text-white py-2 px-3 my-5 rounded-lg"
+        hx-get="/?table=2"
+        hx-target="#table2-body"
+        hx-swap="beforeend"
+        hx-trigger="click"
+        >Fill Table 2</button>
+
+        <button class="bg-blue-500 text-white py-2 px-3 my-5 rounded-lg"
+        hx-get="/htmx2"
+        hx-target="#table3-body"
+        hx-swap="beforeend"
+        hx-trigger="click"
+        >Fill Table 3</button>
+
+    </div>
+
+    <p class="text-2xl font-bold mb-4">First Movie List</p>
+    <table class="min-w-[50%] mb-4" >
+        <thead class="border-b text-lg">
+            <tr>
+                <th class="border">Film Name</th>
+                <th class="border">Director</th>
+            </tr>
+        </thead>
+
+        <tbody class="text-center text-sm" id="table1-body">
+            {% include 'table.html'   %}
+        </tbody>
+    </table>
+
+    <p class="text-2xl font-bold mb-4">Second Movie List</p>
+    <table class="min-w-[50%] mb-4" >
+        <thead class="border-b text-lg">
+            <tr>
+                <th class="border">Film Name</th>
+                <th class="border">Director</th>
+            </tr>
+        </thead>
+
+        <tbody class="text-center text-sm" id="table2-body">
+            {% include 'table.html'   %}
+        </tbody>
+    </table>
+
+    <p class="text-2xl font-bold mb-4">Movie List, different endpoint</p>
+    <table class="min-w-[50%] mb-4" >
+        <thead class="border-b text-lg">
+            <tr>
+                <th class="border">Film Name</th>
+                <th class="border">Director</th>
+            </tr>
+        </thead>
+
+        <tbody class="text-center text-sm" id="table3-body">
+            {% include 'table.html'   %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>Hummus</li>
+        <li>Pita</li>
+        <li>Green salad</li>
+        <li>Halloumi</li>
+    </ul>
+
+    
+</body>
+</html>

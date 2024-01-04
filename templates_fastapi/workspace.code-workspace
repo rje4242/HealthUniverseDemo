@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../../../W_Airflowdemo"
+		},
+		{
+			"path": "../../../../Workspace/airflow"
+		},
+		{
+			"path": "../../../../Workspace/bedrocketl"
+		},
+		{
+			"path": "../../../../Workspace/bedrocketl/dags/bedrocket"
+		}
+	],
+	"settings": {}
+}
